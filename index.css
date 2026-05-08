@@ -1,0 +1,540 @@
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+button { cursor: pointer; border: none; background: none; font: inherit; color: inherit; }
+input, textarea { font: inherit; color: inherit; }
+ul { list-style: none; }
+[hidden] { display: none !important; }
+
+/* ── Palette ── */
+:root {
+  --bg-0:        #0d1117;
+  --bg-1:        #161b22;
+  --bg-2:        #1f2630;
+  --border:      #2a313c;
+  --text-1:      #e6edf3;
+  --text-2:      #9ba6b2;
+  --text-3:      #6b7480;
+  --accent:      #8b5cf6;
+  --accent-soft: rgba(139, 92, 246, 0.10);
+  --danger:      #f87171;
+  --font-ui:   -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", Menlo, monospace;
+}
+
+/* ── App shell ── */
+body {
+  background: var(--bg-0);
+  color: var(--text-1);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ════════════════════════════════════════
+   SIDEBAR
+   ════════════════════════════════════════ */
+
+#sidebar {
+  background: var(--bg-1);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 14px 14px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.app-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-1);
+  letter-spacing: -0.01em;
+}
+
+#search-wrap {
+  padding: 8px 10px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+}
+
+#search-input {
+  width: 100%;
+  background: var(--bg-0);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-1);
+  padding: 6px 10px;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+#search-input::placeholder { color: var(--text-3); }
+#search-input:focus { border-color: var(--accent); }
+#search-input::-webkit-search-cancel-button { display: none; }
+
+/* ── Notes list ── */
+#notes-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+#notes-list::-webkit-scrollbar { width: 4px; }
+#notes-list::-webkit-scrollbar-track { background: transparent; }
+#notes-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── Note row ── */
+.note-row {
+  position: relative;
+  padding: 10px 14px 10px 16px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: background 0.1s, border-color 0.1s;
+  user-select: none;
+}
+.note-row:hover  { background: var(--bg-2); }
+.note-row:focus  { outline: none; background: var(--bg-2); }
+.note-row.selected {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+}
+
+.note-row-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 48px;
+  line-height: 1.4;
+}
+.note-row-title:empty::before { content: 'Untitled'; color: var(--text-3); }
+
+.note-row-desc {
+  font-size: 12px;
+  color: var(--text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+.note-row-time {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 10px;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+.note-row-reminder {
+  font-size: 11px;
+  color: var(--accent);
+  margin-top: 3px;
+  display: none;
+}
+.note-row.has-reminder .note-row-reminder { display: block; }
+
+/* ── Sidebar footer ── */
+#sidebar-footer {
+  border-top: 1px solid var(--border);
+  padding: 8px 14px;
+  flex-shrink: 0;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+}
+
+.install-badge {
+  font-size: 11px;
+  color: var(--text-3);
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+
+/* ── Empty states ── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  gap: 14px;
+}
+.empty-state p {
+  font-size: 13px;
+  color: var(--text-3);
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* ════════════════════════════════════════
+   MAIN / EDITOR AREA
+   ════════════════════════════════════════ */
+
+#main {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg-0);
+}
+
+/* ── Placeholder ── */
+#editor-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 16px;
+  color: var(--text-3);
+  font-size: 14px;
+}
+
+/* ── Note editor ── */
+#note-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Header row: back btn + title */
+#editor-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 20px 6px;
+  flex-shrink: 0;
+}
+
+/* Back button — hidden on desktop, shown on mobile */
+#btn-back { display: none; }
+
+#note-title {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-1);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  min-width: 0;
+}
+#note-title::placeholder { color: var(--text-3); }
+
+/* Description */
+#note-description {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid transparent;
+  outline: none;
+  color: var(--text-2);
+  font-size: 13px;
+  font-style: italic;
+  width: 100%;
+  padding: 4px 20px 8px;
+  flex-shrink: 0;
+  transition: border-color 0.15s;
+}
+#note-description::placeholder { color: var(--text-3); }
+#note-description:focus { border-bottom-color: var(--border); }
+
+/* ── Toolbar ── */
+#editor-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 16px;
+  border-bottom: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+.toolbar-left, .toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Edit / Preview toggle */
+.toggle-group {
+  display: flex;
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.toggle-btn {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--text-2);
+  transition: background 0.1s, color 0.1s;
+}
+.toggle-btn.active      { background: var(--bg-2); color: var(--text-1); }
+.toggle-btn:hover:not(.active) { color: var(--text-1); }
+
+/* Reminder chip (shown in toolbar when reminder is set) */
+.reminder-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid rgba(139,92,246,0.3);
+  border-radius: 4px;
+  padding: 3px 8px;
+  white-space: nowrap;
+}
+.reminder-chip svg { width: 12px; height: 12px; }
+
+/* ── Reminder popover ── */
+#reminder-popover {
+  flex-shrink: 0;
+  background: var(--bg-1);
+  border-bottom: 1px solid var(--border);
+}
+
+#reminder-popover-inner {
+  padding: 14px 20px;
+}
+
+#reminder-popover label {
+  font-size: 12px;
+  color: var(--text-2);
+  display: block;
+  margin-bottom: 6px;
+}
+
+#reminder-input {
+  background: var(--bg-0);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-1);
+  padding: 7px 10px;
+  font-size: 13px;
+  outline: none;
+  width: 100%;
+  color-scheme: dark;
+  transition: border-color 0.15s;
+}
+#reminder-input:focus { border-color: var(--accent); }
+
+.reminder-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.reminder-error {
+  font-size: 12px;
+  color: var(--danger);
+  margin-top: 8px;
+}
+
+/* ── Content area ── */
+#editor-content-wrap {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+#note-content {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-1);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.7;
+  padding: 16px 20px;
+  resize: none;
+  tab-size: 2;
+}
+#note-content::placeholder { color: var(--text-3); }
+
+#note-preview {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  padding: 16px 20px;
+}
+#note-preview::-webkit-scrollbar { width: 4px; }
+#note-preview::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── Markdown preview styles ── */
+.preview { font-size: 15px; line-height: 1.75; color: var(--text-1); }
+
+.preview h1, .preview h2, .preview h3,
+.preview h4, .preview h5, .preview h6 {
+  color: var(--text-1);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 1.4em 0 0.5em;
+  line-height: 1.3;
+}
+.preview h1 { font-size: 1.7em; border-bottom: 1px solid var(--border); padding-bottom: 0.3em; }
+.preview h2 { font-size: 1.35em; }
+.preview h3 { font-size: 1.15em; }
+.preview h4, .preview h5, .preview h6 { font-size: 1em; color: var(--text-2); }
+
+.preview p { margin: 0.75em 0; }
+
+.preview a { color: var(--accent); text-decoration: none; }
+.preview a:hover { text-decoration: underline; }
+
+.preview code {
+  font-family: var(--font-mono);
+  font-size: 0.87em;
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.15em 0.4em;
+}
+
+.preview pre {
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  margin: 1em 0;
+}
+.preview pre code { background: none; border: none; padding: 0; font-size: 13px; }
+
+.preview blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: 14px;
+  color: var(--text-2);
+  font-style: italic;
+  margin: 0.75em 0;
+}
+
+.preview ul, .preview ol { padding-left: 1.5em; margin: 0.6em 0; }
+.preview li { margin: 0.3em 0; }
+
+.preview hr { border: none; border-top: 1px solid var(--border); margin: 1.5em 0; }
+
+.preview table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 13px; }
+.preview th, .preview td { border: 1px solid var(--border); padding: 6px 12px; text-align: left; }
+.preview th { background: var(--bg-1); font-weight: 600; }
+
+.preview img { max-width: 100%; border-radius: 6px; }
+
+.preview strong { font-weight: 700; }
+.preview em { font-style: italic; }
+
+/* ════════════════════════════════════════
+   BUTTONS
+   ════════════════════════════════════════ */
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  color: var(--text-2);
+  transition: background 0.1s, color 0.1s;
+  flex-shrink: 0;
+}
+.btn-icon:hover { background: var(--bg-2); color: var(--text-1); }
+.btn-icon svg   { width: 16px; height: 16px; pointer-events: none; }
+
+.btn-danger:hover { color: var(--danger) !important; background: rgba(248,113,113,0.08) !important; }
+
+/* reminder button expands when chip is inside */
+.btn-reminder-icon.has-chip { width: auto; height: auto; padding: 0; background: transparent !important; }
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+.btn-primary:hover   { opacity: 0.85; }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  border-radius: 6px;
+  font-size: 13px;
+  transition: background 0.1s, color 0.1s;
+  white-space: nowrap;
+}
+.btn-ghost:hover    { background: var(--bg-2); color: var(--text-1); }
+.btn-ghost:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+
+/* ════════════════════════════════════════
+   RESPONSIVE — MOBILE (< 768px)
+   ════════════════════════════════════════ */
+
+@media (max-width: 767px) {
+  #app { grid-template-columns: 1fr; }
+
+  #sidebar {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    z-index: 10;
+    transition: transform 0.25s ease;
+  }
+  #sidebar.hidden { transform: translateX(-100%); }
+
+  #main {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+  }
+  #main.active { transform: translateX(0); }
+
+  /* Show back button on mobile */
+  #btn-back { display: inline-flex; }
+
+  /* Wider title on mobile */
+  #note-title { font-size: 20px; }
+}

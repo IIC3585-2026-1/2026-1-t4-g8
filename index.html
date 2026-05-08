@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0d1117">
+  <meta name="description" content="A minimalist markdown note-taking PWA">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <title>Bangle Notes</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- ── Sidebar ── -->
+    <aside id="sidebar">
+      <div id="sidebar-header">
+        <span class="app-name">Notes</span>
+        <button id="btn-new" class="btn-icon" title="New note" aria-label="New note"></button>
+      </div>
+      <div id="search-wrap">
+        <input type="search" id="search-input" placeholder="Search notes…" autocomplete="off" aria-label="Search notes">
+      </div>
+      <ul id="notes-list" role="list" aria-label="Notes"></ul>
+      <div id="sidebar-footer"></div>
+    </aside>
+
+    <!-- ── Main / Editor ── -->
+    <main id="main">
+
+      <!-- Shown when no note is selected -->
+      <div id="editor-placeholder">
+        <p>Select or create a note</p>
+        <button id="btn-new-center" class="btn-primary">+ New note</button>
+      </div>
+
+      <!-- Shown when a note is open -->
+      <div id="note-editor" hidden>
+
+        <div id="editor-header">
+          <button id="btn-back" class="btn-icon" title="Back" aria-label="Back to list"></button>
+          <input type="text" id="note-title" placeholder="Title" autocomplete="off" spellcheck="true" aria-label="Note title">
+        </div>
+
+        <input type="text" id="note-description" placeholder="Short description…" autocomplete="off" spellcheck="true" aria-label="Note description">
+
+        <div id="editor-toolbar">
+          <div class="toolbar-left">
+            <div class="toggle-group" role="group" aria-label="View mode">
+              <button id="btn-edit-mode" class="toggle-btn active" data-mode="edit">Edit</button>
+              <button id="btn-preview-mode" class="toggle-btn" data-mode="preview">Preview</button>
+            </div>
+          </div>
+          <div class="toolbar-right">
+            <button id="btn-reminder" class="btn-icon btn-reminder-icon" title="Set reminder" aria-label="Set reminder"></button>
+            <button id="btn-delete" class="btn-icon btn-danger" title="Delete note" aria-label="Delete note"></button>
+          </div>
+        </div>
+
+        <!-- Reminder popover -->
+        <div id="reminder-popover" hidden>
+          <div id="reminder-popover-inner">
+            <label for="reminder-input">Remind me at</label>
+            <input type="datetime-local" id="reminder-input" aria-label="Reminder time">
+            <div class="reminder-actions">
+              <button id="btn-reminder-save" class="btn-primary btn-sm">Save</button>
+              <button id="btn-reminder-clear" class="btn-ghost btn-sm">Clear</button>
+            </div>
+            <p id="reminder-error" class="reminder-error" hidden></p>
+          </div>
+        </div>
+
+        <div id="editor-content-wrap">
+          <textarea id="note-content" placeholder="Write your note in markdown…" spellcheck="true" aria-label="Note content"></textarea>
+          <div id="note-preview" class="preview" hidden></div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- marked must load before the ES module so window.marked is available -->
+  <script src="vendor/marked.min.js"></script>
+  <script type="module" src="index.js"></script>
+</body>
+</html>
