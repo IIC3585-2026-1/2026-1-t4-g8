@@ -1,7 +1,7 @@
 import { getFirebaseApp } from './firebase.js';
 
 // Teammate fills in the VAPID key from Firebase Console → Project Settings → Cloud Messaging
-const VAPID_KEY = 'YOUR_VAPID_KEY';
+const VAPID_KEY = 'BCBcPbPxRarXIpxxE69UoZNOZOSHk3xODjokKNoh28KJV6ti5jqj_d60i29YJ7HoL0w-8kZdBsapa389-rDf4dM';
 
 const FB_VERSION = '10.12.0';
 const BASE = `https://www.gstatic.com/firebasejs/${FB_VERSION}`;

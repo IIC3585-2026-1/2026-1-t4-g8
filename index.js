@@ -8,6 +8,9 @@ import { setReminder, clearReminder, updateReminderTitle } from './js/reminders.
 import { firebaseConfig, VAPID_KEY } from './firebase-config.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
 import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-messaging.js';
+import { saveToken } from './js/firebase.js';
+
+const CLOUD_FUNCTION_URL = 'TU_URL_AQUI';
 
 let allNotes = [];
 let messaging = null;
@@ -49,6 +52,9 @@ async function init() {
   const btnNotif = document.getElementById('btn-notif');
   if (btnNotif) btnNotif.addEventListener('click', requestPermission);
 
+  const btnSend = document.getElementById('btn-send-notif');
+  if (btnSend) btnSend.addEventListener('click', sendNotification);
+
   onRoute(({ name, id }) => {
     if (name === 'note') {
       const note = allNotes.find(n => n.id === id);
@@ -70,16 +76,23 @@ async function init() {
   initRouter();
 }
 
-function requestPermission() {
-  Notification.requestPermission().then((permission) => {
-    if (permission === 'granted') {
-      getToken(messaging, { vapidKey: VAPID_KEY }).then((token) => {
-        console.log('Token:', token);
-        navigator.clipboard?.writeText(token);
-        alert(token);
-      });
-    }
-  });
+async function requestPermission() {
+  const permission = await Notification.requestPermission();
+  if (permission !== 'granted') return;
+  const token = await getToken(messaging, { vapidKey: VAPID_KEY });
+  console.log('Token:', token);
+  await saveToken(token);
+  alert('Notificaciones activadas y token guardado');
+}
+
+async function sendNotification() {
+  try {
+    const res = await fetch(CLOUD_FUNCTION_URL);
+    if (!res.ok) throw new Error('Error al enviar');
+    alert('Notificación enviada');
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
 }
 
 // ── Note actions ─────────────────────────────────────────────────────

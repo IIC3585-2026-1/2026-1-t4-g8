@@ -1,11 +1,11 @@
 export const firebaseConfig = {
-    apiKey: "AIzaSyAviqTv7Y5d5ls5mhYLfKzBmaTRhLwnoZM",
-    authDomain: "bangod-23921.firebaseapp.com",                                                                                                                                                                      
-    projectId: "bangod-23921",                                                                                                                                                                                       
-    storageBucket: "bangod-23921.firebasestorage.app",                                                                                                                                                               
-    messagingSenderId: "887389282586",                                                                                                                                                                               
-    appId: "1:887389282586:web:98d23f755658a921720ca3",                                                                                                                                                              
-    measurementId: "G-RDE35MPDFC"                                                                                                                                                                                    
-}; 
+    apiKey: "AIzaSyAxGEigTSZHPO0pKY0cdyGgVVSPXcKImdE",
+    authDomain: "bangod-3ea2b.firebaseapp.com",
+    projectId: "bangod-3ea2b",
+    storageBucket: "bangod-3ea2b.firebasestorage.app",
+    messagingSenderId: "974525657335",
+    appId: "1:974525657335:web:4c5c094e1024e305ff63f2",
+    measurementId: "G-FTFQ2JEKM6"
+  };
 
-export const VAPID_KEY = "BDUWAhZkJ2b54Xi6toipTnNBfgB4Prq78hVrV1kTSUxrAlNxPX4jNtnwyLEPyAQrqtwdmt0g-8UooETcLAbWddk";
+export const VAPID_KEY = "BCBcPbPxRarXIpxxE69UoZNOZOSHk3xODjokKNoh28KJV6ti5jqj_d60i29YJ7HoL0w-8kZdBsapa389-rDf4dM";

@@ -1,13 +1,4 @@
-// ── Firebase configuration ──────────────────────────────────────────
-// Teammate fills in these values from the Firebase Console.
-const FIREBASE_CONFIG = {
-  apiKey:            'YOUR_API_KEY',
-  authDomain:        'YOUR_PROJECT.firebaseapp.com',
-  projectId:         'YOUR_PROJECT_ID',
-  storageBucket:     'YOUR_PROJECT.appspot.com',
-  messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-  appId:             'YOUR_APP_ID',
-};
+import { firebaseConfig as FIREBASE_CONFIG } from '../firebase-config.js';
 
 const FB_VERSION = '10.12.0';
 const BASE = `https://www.gstatic.com/firebasejs/${FB_VERSION}`;
@@ -49,4 +40,10 @@ export async function deleteReminderDoc(noteId) {
   const fs = await getHelpers();
   const ref = fs.doc('reminders', noteId);
   await fs.deleteDoc(ref);
+}
+
+export async function saveToken(token) {
+  const fs = await getHelpers();
+  const ref = fs.doc('tokens', 'current');
+  await fs.setDoc(ref, { token, updatedAt: Date.now() });
 }
