@@ -10,7 +10,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.13.0/fireba
 import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-messaging.js';
 import { saveToken } from './js/firebase.js';
 
-const CLOUD_FUNCTION_URL = 'TU_URL_AQUI';
+const CLOUD_FUNCTION_URL = 'https://two026-1-t4-g8.onrender.com/send';
 
 let allNotes = [];
 let messaging = null;

@@ -23,7 +23,7 @@ app.get('/send', async (req, res) => {
     await admin.messaging().send({
       token,
       notification: {
-        title: 'Bangle Notes',
+        title: 'BanGOD Notes',
         body: '¡Notificación de prueba!'
       }
     });
