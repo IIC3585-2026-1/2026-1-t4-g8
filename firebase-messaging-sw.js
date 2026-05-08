@@ -6,7 +6,7 @@ firebase.initializeApp({
     projectId: "bangod-23921",                                                                                                                                                                                       
     messagingSenderId: "887389282586",                                                                                                                                                                               
     appId: "1:887389282586:web:98d23f755658a921720ca3"                                                                                                                                                               
-  });                                                                                                                                                                                                                
+});                                                                                                                                                                                                                
                                                                                                                                                                                                                      
 firebase.messaging();                                                                                                                                                                                              
                   
