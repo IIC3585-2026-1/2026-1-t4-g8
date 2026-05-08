@@ -5,7 +5,12 @@ import { initSidebar, setNotes, setSelectedId, updateNoteRow } from './js/ui/sid
 import { initEditor, loadNote, clearEditor }        from './js/ui/editor.js';
 import { setReminder, clearReminder, updateReminderTitle } from './js/reminders.js';
 
+import { firebaseConfig, VAPID_KEY } from './firebase-config.js';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
+import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-messaging.js';
+
 let allNotes = [];
+let messaging = null;
 
 // ── Bootstrap ────────────────────────────────────────────────────────
 
@@ -16,6 +21,16 @@ async function init() {
       console.warn('[SW] Registration failed:', e.message)
     );
   }
+
+  // Firebase Cloud Messaging setup
+  const app = initializeApp(firebaseConfig);
+  messaging = getMessaging(app);
+  onMessage(messaging, (payload) => {
+    console.log('Foreground:', payload);
+    navigator.serviceWorker.ready.then((reg) => {
+      reg.showNotification(payload.notification.title, { body: payload.notification.body });
+    });
+  });
 
   await openDB();
   allNotes = await listNotes();
@@ -30,6 +45,9 @@ async function init() {
   });
 
   setNotes(allNotes);
+
+  const btnNotif = document.getElementById('btn-notif');
+  if (btnNotif) btnNotif.addEventListener('click', requestPermission);
 
   onRoute(({ name, id }) => {
     if (name === 'note') {
@@ -50,6 +68,18 @@ async function init() {
   });
 
   initRouter();
+}
+
+function requestPermission() {
+  Notification.requestPermission().then((permission) => {
+    if (permission === 'granted') {
+      getToken(messaging, { vapidKey: VAPID_KEY }).then((token) => {
+        console.log('Token:', token);
+        navigator.clipboard?.writeText(token);
+        alert(token);
+      });
+    }
+  });
 }
 
 // ── Note actions ─────────────────────────────────────────────────────
