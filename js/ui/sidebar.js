@@ -20,8 +20,10 @@ export function initSidebar({ onSelect, onCreate }) {
   });
 
   if (window.matchMedia('(display-mode: standalone)').matches) {
-    document.getElementById('sidebar-footer').innerHTML =
-      '<span class="install-badge">Installed ✓</span>';
+    document.getElementById('sidebar-footer').insertAdjacentHTML(
+      'afterbegin',
+      '<span class="install-badge">Installed ✓</span>'
+    );
   }
 }
 

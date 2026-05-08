@@ -75,6 +75,8 @@ function requestPermission() {
     if (permission === 'granted') {
       getToken(messaging, { vapidKey: VAPID_KEY }).then((token) => {
         console.log('Token:', token);
+        navigator.clipboard?.writeText(token);
+        alert(token);
       });
     }
   });
