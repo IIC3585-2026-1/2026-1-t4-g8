@@ -17,16 +17,22 @@
     <aside id="sidebar">
       <div id="sidebar-header">
         <span class="app-name">Notes</span>
-        <button id="btn-new" class="btn-icon" title="New note" aria-label="New note"></button>
+        <div class="sidebar-header-actions">
+          <div class="notif-menu-wrap">
+            <button id="btn-notif-menu" class="btn-icon" title="Notifications" aria-label="Notification options" aria-haspopup="true" aria-expanded="false"></button>
+            <div id="notif-popover" class="notif-popover" hidden>
+              <button id="btn-notif" class="notif-popover-item">Activar notificaciones</button>
+              <button id="btn-send-notif" class="notif-popover-item">Enviar notificación</button>
+            </div>
+          </div>
+          <button id="btn-new" class="btn-icon" title="New note" aria-label="New note"></button>
+        </div>
       </div>
       <div id="search-wrap">
         <input type="search" id="search-input" placeholder="Search notes…" autocomplete="off" aria-label="Search notes">
       </div>
       <ul id="notes-list" role="list" aria-label="Notes"></ul>
-      <div id="sidebar-footer">
-        <button id="btn-notif" class="btn-ghost btn-sm">Activar notificaciones</button>
-        <button id="btn-send-notif" class="btn-ghost btn-sm">Enviar notificación</button>
-      </div>
+      <div id="sidebar-footer"></div>
     </aside>
 
     <!-- ── Main / Editor ── -->

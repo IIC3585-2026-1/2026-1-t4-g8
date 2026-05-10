@@ -507,6 +507,49 @@ body {
 
 .btn-sm { padding: 6px 12px; font-size: 12px; }
 
+/* ── Sidebar header actions / notifications popover ── */
+.sidebar-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.notif-menu-wrap {
+  position: relative;
+}
+
+.notif-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 200px;
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  padding: 4px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+}
+
+.notif-popover[hidden] { display: none; }
+
+.notif-popover-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--text-1);
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.notif-popover-item:hover { background: var(--bg-2); }
+
 /* ════════════════════════════════════════
    RESPONSIVE — MOBILE (< 768px)
    ════════════════════════════════════════ */
