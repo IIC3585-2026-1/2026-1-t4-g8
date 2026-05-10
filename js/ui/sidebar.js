@@ -1,4 +1,4 @@
-import { iconPlus }    from './icons.js';
+import { iconPlus, iconMore } from './icons.js';
 import { searchNotes } from '../notes.js';
 
 let _notes      = [];
@@ -11,6 +11,8 @@ export function initSidebar({ onSelect, onCreate }) {
   const btnNew = document.getElementById('btn-new');
   btnNew.innerHTML = iconPlus;
   btnNew.addEventListener('click', onCreate);
+
+  initNotifMenu();
 
   const btnNewCenter = document.getElementById('btn-new-center');
   if (btnNewCenter) btnNewCenter.addEventListener('click', onCreate);
@@ -56,6 +58,41 @@ export function updateNoteRow(note) {
     chip.textContent = '';
     el.classList.remove('has-reminder');
   }
+}
+
+function initNotifMenu() {
+  const btn = document.getElementById('btn-notif-menu');
+  const pop = document.getElementById('notif-popover');
+  if (!btn || !pop) return;
+
+  btn.innerHTML = iconMore;
+
+  const close = () => {
+    pop.hidden = true;
+    btn.setAttribute('aria-expanded', 'false');
+  };
+  const open = () => {
+    pop.hidden = false;
+    btn.setAttribute('aria-expanded', 'true');
+  };
+
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    pop.hidden ? open() : close();
+  });
+
+  pop.addEventListener('click', e => {
+    if (e.target.closest('.notif-popover-item')) close();
+  });
+
+  document.addEventListener('click', e => {
+    if (pop.hidden) return;
+    if (!pop.contains(e.target) && e.target !== btn) close();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') close();
+  });
 }
 
 function renderList(notes) {
